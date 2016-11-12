@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>TODO demo</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="js/avalon.js"></script>
+        <script>
+            
+            var vm = avalon.define({
+                $id: "main",
+                record:"",
+                add:function(r){
+                    // console.log(record_set);
+                    var L = vm.record_set;
+                    L.push({id:L.length+1, content:r, done:false, archive:false,
+                            time:new Date().toLocaleString()});
+                },
+                view:"todo",
+                record_set:[],
+                t:function(e){ //test function
+                    e.archive=true;
+                    console.log(e.archive);
+                },
+                switch:function(){
+                    if(vm.view == "todo"){ vm.view="archive"; }
+                    else {vm.view = "todo";}
+                }
+            });
+        </script>
+        <style> .ms-controller{display:none;} </style>
+    </head>
+    <body>
+        <div :controller="main">
+            <div class="input">
+                <input :duplex="@record" />
+                <button :click="@add(@record)"> + </button>
+                <button :click="@switch"> % </button>
+            </div>
+            <div class="content" >
+                <list :for="($index,e) in @record_set" >
+                    <li :if="!e.archive && (@view == 'todo')">
+                        <input :click="e.done=!e.done" type="checkbox"></input>
+                        <span :css="{background: e.done?'pink':''}">{{e.id+" "+e.content}}</span>
+                        <button :click="e.archive=true"> x</button> {{e.time}}
+                    </li>
+
+                    <li :if="e.archive && (@view != 'todo')">
+                        <input :click="e.done=!e.done" type="checkbox"></input>
+                        <span :css="{background: e.done?'pink':''}">{{e.id+" "+e.content}}</span>
+                        <button :click="e.archive=false"> * </button> {{e.time}}
+
+                    </li>
+                </list>
+            </div>
+        </div>
+    </body>
+</html>
